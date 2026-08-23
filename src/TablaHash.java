@@ -11,7 +11,7 @@ public class TablaHash {
         this.tabla = new NodoHash[CAPACIDAD];
     }
 
-    // Función Hash para cadenas (ISBN)
+    // Función Hash para cadenas
     private int hash(String isbn) {
         int hash = 0;
         for (int i = 0; i < isbn.length(); i++) {
