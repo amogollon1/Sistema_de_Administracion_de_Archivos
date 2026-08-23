@@ -85,8 +85,8 @@ public class MonticuloMaximo { //Orden por cantidad de libros prestados
         return buscarPrimerPadreDisponible(actual.derecho);
     }
 
-    // Visualización de montículo máximo (nodos)
-    public void mostrarMonticulo(NodoMonticulo nodo, String prefijo, boolean esIzquierdo) {
+    // Visualización de montículo máximo
+    public void mostrarMonticulo(NodoMonticulo nodo, String prefijo, boolean esIzquierdo) { //Prefijo usado para tabular los nodos y que se vean mejor
         if (nodo != null) {
             System.out.println(prefijo + (esIzquierdo ? "├── " : "└── ") +
                                "ISBN: " + nodo.getLibro().getISBN() +
@@ -98,7 +98,7 @@ public class MonticuloMaximo { //Orden por cantidad de libros prestados
 
     public void mostrarVisualizacion() {
         if (raiz == null) {
-            System.out.println("El montículo máximo está vacío.");
+            System.out.println("El monticulo maximo esta vacio.");
         } else {
             mostrarMonticulo(raiz, "", false);
         }

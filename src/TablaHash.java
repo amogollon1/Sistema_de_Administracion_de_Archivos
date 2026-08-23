@@ -3,84 +3,88 @@
  * @author ojela
  */
 
-class TablaHash {
-    private Libro[] tabla = new Libro[13];
-    private boolean[] eliminado = new boolean[13];
+public class TablaHash {
+    private static final int CAPACIDAD = 13;
+    private NodoHash[] tabla;
 
-    private int hash(int codigo) {
-        return Math.abs(codigo) % 13;
+    public TablaHash() {
+        this.tabla = new NodoHash[CAPACIDAD];
     }
 
-    Libro buscar(int codigo) {
-        int posicion = hash(codigo);
-
-        for (int i = 0; i < 13; i++) {
-            int indice = (posicion + i) % 13;
-
-            if (tabla[indice] != null && tabla[indice].getISBN() == codigo)
-                return tabla[indice];
-
-            if (tabla[indice] == null && !eliminado[indice])
-                return null;
-        }
-
-        return null;
-    }
-
-    int obtenerPosicion(int codigo) {
-        int posicion = hash(codigo);
-
-        for (int i = 0; i < 13; i++) {
-            int indice = (posicion + i) % 13;
-
-            if (tabla[indice] != null && tabla[indice].getISBN() == codigo)
-                return indice;
-
-            if (tabla[indice] == null && !eliminado[indice])
-                return -1;
-        }
-
-        return -1;
-    }
-
-    boolean insertar(Libro libro) {
-        if (buscar(libro.getISBN()) != null)
-            return false;
-
-        int posicion = hash(libro.getISBN());
-
-        for (int i = 0; i < 13; i++) {
-            int indice = (posicion + i) % 13;
-
-            if (tabla[indice] == null) {
-                tabla[indice] = libro;
-                eliminado[indice] = false;
-                return true;
+    // Función Hash para cadenas (ISBN)
+    private int hash(String isbn) {
+        int hash = 0;
+        for (int i = 0; i < isbn.length(); i++) {
+            char c = isbn.charAt(i);
+            if (c != '-') { // Ignora guiones si existen
+                hash = (hash * 31 + c) % CAPACIDAD;
             }
         }
-
-        return false;
+        return Math.abs(hash);
     }
 
-    boolean eliminar(int codigo) {
-        int posicion = obtenerPosicion(codigo);
+    // Insertar o Actualizar si el ISBN ya existe
+    public boolean insertar(Libro libro) {
+        int posicion = hash(libro.getISBN());
+        NodoHash actual = tabla[posicion];
 
-        if (posicion == -1)
-            return false;
+        // Si la casilla está vacía, insertamos directamente
+        if (actual == null) {
+            tabla[posicion] = new NodoHash(libro);
+            return true;
+        }
 
-        tabla[posicion] = null;
-        eliminado[posicion] = true;
+        // Si hay colisión, recorremos la lista enlazada
+        NodoHash anterior = null;
+        while (actual != null) {
+            // Si el ISBN ya existe, actualizamos la información
+            if (actual.getLibro().getISBN().equals(libro.getISBN())) {
+                actual.setLibro(libro);
+                return true;
+            }
+            anterior = actual;
+            actual = actual.getSiguiente();
+        }
+
+        // Si no existía en la lista, lo agregamos al final de la lista enlazada
+        anterior.setSiguiente(new NodoHash(libro));
         return true;
     }
 
-    void mostrarTabla() {
-        System.out.println("\nTABLA HASH");
+    // Buscar un libro por ISBN
+    public Libro buscar(String isbn) {
+        int posicion = hash(isbn);
+        NodoHash actual = tabla[posicion];
 
-        for (int i = 0; i < 13; i++) {
-            if (tabla[i] == null)
-                System.out.println("[" + i + "] VACIA");
-            else
-                System.out.println("[" + i + "] Codigo: " + tabla[i].getISBN() + " | " + tabla[i].getTitulo());
+        while (actual != null) {
+            if (actual.getLibro().getISBN().equals(isbn)) {
+                return actual.getLibro();
+            }
+            actual = actual.getSiguiente();
+        }
+        return null; // No encontrado
+    }
+
+    // Visualización de la tabla hash
+    public void mostrarTabla() {
+        System.out.println("\nVISUALIZACION DE TABLA HASH");
+        for (int i = 0; i < CAPACIDAD; i++) {
+            System.out.print("[" + i + "] ");
+            NodoHash actual = tabla[i];
+            
+            if (actual == null) {
+                System.out.println("VACIA");
+            } else {
+                while (actual != null) {
+                    System.out.print("[ISBN: " + actual.getLibro().getISBN() + 
+                                       " - " + actual.getLibro().getTitulo() + "]");
+                    actual = actual.getSiguiente();
+                    if (actual != null) {
+                        System.out.print(" -> "); // Indica la colisión encadenada
+                    }
+                }
+                System.out.println();
+            }
         }
     }
 }

@@ -105,7 +105,7 @@ public class MonticuloMinimo { //Orden por cantidad de libros disponibles
     }
 
     // Visualización de montículo mínimo (nodos)
-    public void mostrarMonticulo(NodoMonticulo nodo, String prefijo, boolean esIzquierdo) {
+    public void mostrarMonticulo(NodoMonticulo nodo, String prefijo, boolean esIzquierdo) { //Prefijo usado para tabular los nodos y que se vean mejor
         if (nodo != null) {
             System.out.println(prefijo + (esIzquierdo ? "├── " : "└── ") +
                                "ISBN: " + nodo.getLibro().getISBN() +
