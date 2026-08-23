@@ -3,7 +3,7 @@
  * @author ojela
  */
 
-public class MonticuloMaximo {
+public class MonticuloMaximo { //Orden por cantidad de libros prestados
     private NodoMonticulo raiz;
 
     public boolean estaVacio() {
@@ -63,7 +63,7 @@ public class MonticuloMaximo {
     }
 
     // Busca un nodo por el ISBN del libro (Búsqueda en árbol)
-    private NodoMonticulo buscarNodoPorISBN(NodoMonticulo actual, int isbn) {
+    private NodoMonticulo buscarNodoPorISBN(NodoMonticulo actual, String isbn) {
         if (actual == null) return null;
         if (actual.getLibro().getISBN() == isbn) return actual;
 
@@ -85,7 +85,7 @@ public class MonticuloMaximo {
         return buscarPrimerPadreDisponible(actual.derecho);
     }
 
-    // Requisito ii: Visualización de montículo máximo (nodos)
+    // Visualización de montículo máximo (nodos)
     public void mostrarMonticulo(NodoMonticulo nodo, String prefijo, boolean esIzquierdo) {
         if (nodo != null) {
             System.out.println(prefijo + (esIzquierdo ? "├── " : "└── ") +

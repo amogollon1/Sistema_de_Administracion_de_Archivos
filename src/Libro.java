@@ -4,7 +4,7 @@
  */
 //Clase libro con todos sus atributos, constructor y métodos de acceso
 public class Libro {
-    private int ISBN;
+    private String ISBN;
     private String titulo;
     private String autor;
     private String editorial;
@@ -13,7 +13,7 @@ public class Libro {
     private int cantidadDisponible;
     private int cantidadPrestada;
     //Constructor para el objeto de tipo Libro
-    public Libro(int ISBN, String titulo, String autor, String editorial, String year, String categoria, int cantidadDisponible, int cantidadPrestada){
+    public Libro(String ISBN, String titulo, String autor, String editorial, String year, String categoria, int cantidadDisponible, int cantidadPrestada){
         this.ISBN = ISBN;
         this.titulo = titulo;
         this.autor = autor;
@@ -24,7 +24,7 @@ public class Libro {
         this.cantidadPrestada = cantidadPrestada;
     }
     //getters y setters públicos para acceder a la información
-    public int getISBN(){
+    public String getISBN(){
         return ISBN;
     }
     public void setTitulo(String titulo){
