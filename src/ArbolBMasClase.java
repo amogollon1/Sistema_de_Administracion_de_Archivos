@@ -6,13 +6,13 @@ import java.util.Collections;
 
 public class ArbolBMasClase {
     private NodoArbol raiz;
-    private final int grado = 2;
+    private final int grado = 2; //Número máximo de hijos por nodo
 
     public ArbolBMasClase() {
         raiz = new NodoArbol(true);
     }
 
-    public void insertar(int clave) {
+    public void insertar(String clave) {
         NodoArbol r = raiz;
         if (r.esHoja && r.claves.size() < 2 * grado - 1) {
             r.claves.add(clave);
@@ -33,18 +33,21 @@ public class ArbolBMasClase {
         }
     }
 
-    private void insertarNoLleno(NodoArbol nodo, int clave) {
+    private void insertarNoLleno(NodoArbol nodo, String clave) {
         if (nodo.esHoja) {
             nodo.claves.add(clave);
             Collections.sort(nodo.claves);
         } else {
             int i = 0;
-            while (i < nodo.claves.size() && clave >= nodo.claves.get(i)) i++;
+            while (i < nodo.claves.size() && clave.compareTo(nodo.claves.get(i)) >= 0) 
+                i++;
             NodoArbol hijo = nodo.hijos.get(i);
             // Solo divide el hijo si está lleno
             if (hijo.claves.size() == 2 * grado - 1) {
                 dividir(nodo, i);
-                if (clave >= nodo.claves.get(i)) i++;
+                if (clave.compareTo(nodo.claves.get(i)) >= 0){
+                    i++;
+                } 
             }
             insertarNoLleno(nodo.hijos.get(i), clave);
         }
@@ -58,13 +61,13 @@ public class ArbolBMasClase {
         if (hijo.esHoja) {
             nuevo.claves.addAll(hijo.claves.subList(medio, hijo.claves.size()));
             hijo.claves.subList(medio, hijo.claves.size()).clear();
-            int claveSeparadora = nuevo.claves.get(0);
+            String claveSeparadora = nuevo.claves.get(0);
             padre.claves.add(indice, claveSeparadora);
             padre.hijos.add(indice + 1, nuevo);
         } else {
             
-            // Se obtener la clave separadora antes de borrar 
-            int claveSeparadora = hijo.claves.get(medio);
+            // Se obtiene la clave separadora antes de borrar
+            String claveSeparadora = hijo.claves.get(medio);
 
             // Se pasa las claves y los hijos
             nuevo.claves.addAll(hijo.claves.subList(medio + 1, hijo.claves.size()));
@@ -95,48 +98,44 @@ public class ArbolBMasClase {
         }
     }
 
-    // Búsqueda del dato
-    public void buscar(int clave) {
-        if (buscarRecursivo(raiz, clave)) {
-            System.out.println(" El numero " + clave + " Si existe en el arbol.");
-        } else {
-            System.out.println(" El numero " + clave + " No existe en el arbol.");
-        }
+    // Búsqueda del dato (se cambio a boolean porque es más versátil)
+    public boolean buscar(String clave) {
+        return buscarRecursivo(raiz, clave);
     }
 
-    private boolean buscarRecursivo(NodoArbol nodo, int clave) {
+    private boolean buscarRecursivo(NodoArbol nodo, String clave) {
         if (nodo.esHoja) {
             return nodo.claves.contains(clave);
         }
         int i = 0;
-        while (i < nodo.claves.size() && clave >= nodo.claves.get(i)) {
+        while (i < nodo.claves.size() && clave.compareTo(nodo.claves.get(i)) >= 0) {
             i++;
         }
         return buscarRecursivo(nodo.hijos.get(i), clave);
     }
 
     //eliminar dato
-public void eliminar(int clave) {
-    if (raiz == null) return;
+    public void eliminar(String clave) {
+        if (raiz == null) return;
 
-    eliminarRecursivo(raiz, clave);
+        eliminarRecursivo(raiz, clave);
 
-    // Caso especial: La raíz se quedó vacía después de una fusión
-    if (!raiz.esHoja && raiz.claves.isEmpty()) {
-        // El primer hijo se convierte en la nueva raíz
-        raiz = raiz.hijos.get(0);
+        // Caso especial: La raíz se quedó vacía después de una fusión
+        if (!raiz.esHoja && raiz.claves.isEmpty()) {
+            // El primer hijo se convierte en la nueva raíz
+            raiz = raiz.hijos.get(0);
+        }
     }
-}
 
-    private void eliminarRecursivo(NodoArbol nodo, int clave) {
+    private void eliminarRecursivo(NodoArbol nodo, String clave) {
         int i = 0;
-        while (i < nodo.claves.size() && clave >= nodo.claves.get(i)) {
+        while (i < nodo.claves.size() && clave.compareTo(nodo.claves.get(i)) >= 0) {
             i++;
         }
 
         if (nodo.esHoja) {
             // Caso Base, Eliminar de la hoja
-            nodo.claves.remove(Integer.valueOf(clave));
+            nodo.claves.remove(clave);
             return;
         }
 
@@ -189,14 +188,14 @@ public void eliminar(int clave) {
     private void prestarDeIzquierda(NodoArbol padre, int idxHijo, NodoArbol hermanoIzq, NodoArbol hijo) {
         if (hijo.esHoja) {
             // Toma la última clave del hermano izquierdo
-            int clavePrestada = hermanoIzq.claves.remove(hermanoIzq.claves.size() - 1);
+            String clavePrestada = hermanoIzq.claves.remove(hermanoIzq.claves.size() - 1);
             hijo.claves.add(0, clavePrestada);
             // Actualiza la clave divisora en el padre
             padre.claves.set(idxHijo - 1, hijo.claves.get(0));
         } else {
             // Rotación en nodos internos
-            int clavePadre = padre.claves.get(idxHijo - 1);
-            int ultimaClaveHermano = hermanoIzq.claves.remove(hermanoIzq.claves.size() - 1);
+            String clavePadre = padre.claves.get(idxHijo - 1);
+            String ultimaClaveHermano = hermanoIzq.claves.remove(hermanoIzq.claves.size() - 1);
             NodoArbol ultimoHijoHermano = hermanoIzq.hijos.remove(hermanoIzq.hijos.size() - 1);
 
             hijo.claves.add(0, clavePadre);
@@ -208,14 +207,14 @@ public void eliminar(int clave) {
     private void prestarDeDerecha(NodoArbol padre, int idxHijo, NodoArbol hermanoDer, NodoArbol hijo) {
         if (hijo.esHoja) {
             // Toma la primera clave del hermano derecho
-            int clavePrestada = hermanoDer.claves.remove(0);
+            String clavePrestada = hermanoDer.claves.remove(0);
             hijo.claves.add(clavePrestada);
             // Actualiza la clave divisora en el padre
             padre.claves.set(idxHijo, hermanoDer.claves.get(0));
         } else {
             // Rotación en nodos internos
-            int clavePadre = padre.claves.get(idxHijo);
-            int primeraClaveHermano = hermanoDer.claves.remove(0);
+            String clavePadre = padre.claves.get(idxHijo);
+            String primeraClaveHermano = hermanoDer.claves.remove(0);
             NodoArbol primerHijoHermano = hermanoDer.hijos.remove(0);
 
             hijo.claves.add(clavePadre);
@@ -236,7 +235,7 @@ public void eliminar(int clave) {
             padre.hijos.remove(idxIzq + 1);
         } else {
             // En nodos internos, la clave del padre baja a la fusión
-            int clavePadre = padre.claves.remove(idxIzq);
+            String clavePadre = padre.claves.remove(idxIzq);
             izq.claves.add(clavePadre);
             izq.claves.addAll(der.claves);
             izq.hijos.addAll(der.hijos);
