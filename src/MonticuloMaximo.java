@@ -32,14 +32,16 @@ public class MonticuloMaximo { //Orden por cantidad de libros prestados
         }
     }
 
-    // Inserción en orden de árbol completo (Nivel por Nivel de izquierda a derecha)
     public void insertar(Libro libro) {
-        NodoMonticulo nuevo = new NodoMonticulo(libro);
+        // Crear una copia independiente del libro para que la tabla hash no afecte las posiciones del heap
+        Libro copiaLibro = new Libro(libro.getISBN(), libro.getTitulo(), libro.getAutor(), libro.getEditorial(), libro.getYear(), libro.getCategoria(), libro.getCantidadDisponible(), libro.getCantidadPrestada());
+        copiaLibro.setCantidadPrestada(libro.getCantidadPrestada());
+
+        NodoMonticulo nuevo = new NodoMonticulo(copiaLibro);
         if (raiz == null) {
             raiz = nuevo;
             return;
         }
-
         // Buscamos el primer padre disponible para mantener la propiedad de árbol completo
         NodoMonticulo padre = buscarPrimerPadreDisponible(raiz);
         if (padre != null) {
@@ -56,11 +58,14 @@ public class MonticuloMaximo { //Orden por cantidad de libros prestados
     // Flota el nodo hacia arriba si su cantidad prestada es mayor que la de su padre
     private void burbujaArriba(NodoMonticulo nodo) {
         while (nodo.padre != null && nodo.getLibro().getCantidadPrestada() > nodo.padre.getLibro().getCantidadPrestada()) {
-            // Intercambiamos los objetos Libro contenidos
+            // Copiamos temporalmente el libro actual
             Libro temp = nodo.getLibro();
+            
+            // Intercambiamos referencias de libro entre nodos
             nodo.setLibro(nodo.padre.getLibro());
             nodo.padre.setLibro(temp);
 
+            // Subimos al padre
             nodo = nodo.padre;
         }
     }
@@ -99,13 +104,18 @@ public class MonticuloMaximo { //Orden por cantidad de libros prestados
     }
 
     // Visualización de montículo máximo
-    private void mostrarMonticulo(NodoMonticulo nodo, String prefijo, boolean esIzquierdo) { //Prefijo usado para tabular los nodos y que se vean mejor
+    private void mostrarMonticulo(NodoMonticulo nodo, String prefijo, boolean esDerecho) {
         if (nodo != null) {
-            System.out.println(prefijo + (esIzquierdo ? "├── " : "└── ") +
-                               "ISBN: " + nodo.getLibro().getISBN() +
-                               " | Prestados: " + nodo.getLibro().getCantidadPrestada());
-            mostrarMonticulo(nodo.izquierdo, prefijo + (esIzquierdo ? "│   " : "    "), true);
-            mostrarMonticulo(nodo.derecho, prefijo + (esIzquierdo ? "│   " : "    "), false);
+            // 1. Procesar primero el hijo derecho (aparecerá en la parte superior)
+            mostrarMonticulo(nodo.derecho, prefijo + (esDerecho ? "    " : "│   "), true);
+
+            // 2. Imprimir el nodo actual
+            System.out.println(prefijo + (esDerecho ? "┌── " : "└── ") +
+                            "ISBN: " + nodo.getLibro().getISBN() +
+                            " | Prestados: " + nodo.getLibro().getCantidadPrestada());
+
+            // 3. Procesar el hijo izquierdo (aparecerá en la parte inferior)
+            mostrarMonticulo(nodo.izquierdo, prefijo + (esDerecho ? "│   " : "    "), false);
         }
     }
 
@@ -113,7 +123,7 @@ public class MonticuloMaximo { //Orden por cantidad de libros prestados
         if (raiz == null) {
             System.out.println("El monticulo maximo esta vacio.");
         } else {
-            mostrarMonticulo(raiz, "", false);
+            mostrarMonticulo(raiz, "", true);
         }
     }
 }
