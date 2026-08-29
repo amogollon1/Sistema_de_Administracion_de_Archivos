@@ -76,7 +76,7 @@ public class TablaHash {
                 System.out.println("VACIA");
             } else {
                 while (actual != null) {
-                    System.out.print("[ISBN: " + actual.getLibro().getISBN() + 
+                    System.out.print("[ISBN: " + actual.getLibro().getISBN() +
                                        " - " + actual.getLibro().getTitulo() + "]");
                     actual = actual.getSiguiente();
                     if (actual != null) {

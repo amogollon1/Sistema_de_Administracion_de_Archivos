@@ -1,3 +1,6 @@
+import java.util.LinkedList;
+import java.util.Queue;
+
 /**
  *
  * @author ojela
@@ -84,7 +87,7 @@ public class MonticuloMinimo { //Orden por cantidad de libros disponibles
     // Busca un nodo por el ISBN del libro (Búsqueda en árbol)
     private NodoMonticulo buscarNodoPorISBN(NodoMonticulo actual, String isbn) {
         if (actual == null) return null;
-        if (actual.getLibro().getISBN() == isbn) return actual;
+        if (actual.getLibro().getISBN().equals(isbn)) return actual;
 
         NodoMonticulo izq = buscarNodoPorISBN(actual.izquierdo, isbn);
         if (izq != null) return izq;
@@ -95,21 +98,31 @@ public class MonticuloMinimo { //Orden por cantidad de libros disponibles
     // Busca el primer nodo disponible que le falte un hijo (izquierdo o derecho)
     private NodoMonticulo buscarPrimerPadreDisponible(NodoMonticulo actual) {
         if (actual == null) return null;
-        if (actual.izquierdo == null || actual.derecho == null) return actual;
 
-        // Búsqueda por niveles sencilla
-        NodoMonticulo izq = buscarPrimerPadreDisponible(actual.izquierdo);
-        if (izq != null) return izq;
+        Queue<NodoMonticulo> cola = new LinkedList<>();
+        cola.add(actual);
 
-        return buscarPrimerPadreDisponible(actual.derecho);
+        while (!cola.isEmpty()) {
+            NodoMonticulo temp = cola.poll();
+
+            // Si le falta alguno de los dos hijos, este es el padre disponible
+            if (temp.izquierdo == null || temp.derecho == null) {
+                return temp;
+        }
+
+        cola.add(temp.izquierdo);
+        cola.add(temp.derecho);
+    }
+
+    return null;
     }
 
     // Visualización de montículo mínimo (nodos)
-    public void mostrarMonticulo(NodoMonticulo nodo, String prefijo, boolean esIzquierdo) { //Prefijo usado para tabular los nodos y que se vean mejor
+    private void mostrarMonticulo(NodoMonticulo nodo, String prefijo, boolean esIzquierdo) { //Prefijo usado para tabular los nodos y que se vean mejor
         if (nodo != null) {
             System.out.println(prefijo + (esIzquierdo ? "├── " : "└── ") +
                                "ISBN: " + nodo.getLibro().getISBN() +
-                               " | Prestados: " + nodo.getLibro().getCantidadPrestada());
+                               " | Disponibles: " + nodo.getLibro().getCantidadPrestada());
             mostrarMonticulo(nodo.izquierdo, prefijo + (esIzquierdo ? "│   " : "    "), true);
             mostrarMonticulo(nodo.derecho, prefijo + (esIzquierdo ? "│   " : "    "), false);
         }
