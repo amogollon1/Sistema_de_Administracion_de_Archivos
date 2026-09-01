@@ -7,7 +7,7 @@ import java.util.*;
 public class main {
     public static void main(String[] args) {
         Scanner nat = new Scanner(System.in);
-        
+        //Instancia de todas las estructuras para el manejo de archivos
         ArbolBMasClase arbol = new ArbolBMasClase();
         TablaHash tablaHash = new TablaHash();
         MonticuloMaximo maxHeap = new MonticuloMaximo();
@@ -15,7 +15,7 @@ public class main {
         GestorDeArchivos gestorDeArchivos = new GestorDeArchivos();
 
         boolean salir = true;
-
+        //Ciclo principal donde se encuentra el menú y se realizan todas las interacciones
         do {
             System.out.println("Sistema de Administracion de Archivos");
             System.out.println("\tMENU");
@@ -46,7 +46,7 @@ public class main {
                 case 4:
                     
                     boolean menuPrincipal = false;
-
+                    //Subciclo para la visualización de estructuras
                     do { 
                         System.out.println("\tVisualizacion de informacion.");
                     System.out.println("Elija una opcion:");

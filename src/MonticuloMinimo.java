@@ -13,27 +13,27 @@ public class MonticuloMinimo { //Orden por cantidad de libros disponibles
         return raiz == null;
     }
 
-    // Método principal para procesar existencias (Requisito del proyecto)
+    // Método principal para procesar existencias
     public void actualizarOInsertar(Libro libro, int cantidadDisponible) {
-        // 1. Buscamos si el libro ya existe en el montículo
+        //Buscamos si el libro ya existe en el montículo
         NodoMonticulo existente = buscarNodoPorISBN(raiz, libro.getISBN());
 
         if (existente != null) {
-            // 2. Si ya existe, sumamos las cantidades
+            //Si ya existe, sumamos las cantidades
             int nuevaCantidad = existente.getLibro().getCantidadDisponible() + cantidadDisponible;
             existente.getLibro().setCantidadDisponible(nuevaCantidad);
             
-            // Como la cantidad AUMENTÓ, hacemos que se hunda el nodo en el Min Heap
+            //Como la cantidad aumenta, hacemos que se hunda el nodo en el Min Heap
             burbujaAbajo(existente);
         } else {
-            // 3. Si no existe, nos aseguramos que traiga la cantidad del préstamo e insertamos
+            //Si no existe, nos aseguramos que traiga la cantidad del préstamo e insertamos
             libro.setCantidadDisponible(cantidadDisponible);
             insertar(libro);
         }
     }
-
+    //Método para insertar libros en el minHeap
     public void insertar(Libro libro) {
-        // Crear una copia independiente del libro para que la tabla hash no afecte las posiciones del heap
+        //Crear una copia independiente del libro para que la tabla hash no afecte las posiciones del heap
         Libro copiaLibro = new Libro(libro.getISBN(), libro.getTitulo(), libro.getAutor(), libro.getEditorial(), libro.getYear(), libro.getCategoria(), libro.getCantidadDisponible(), libro.getCantidadPrestada());
         copiaLibro.setCantidadDisponible(libro.getCantidadDisponible());
 
@@ -42,7 +42,7 @@ public class MonticuloMinimo { //Orden por cantidad de libros disponibles
             raiz = nuevo;
             return;
         }
-        // Buscamos el primer padre disponible para mantener la propiedad de árbol completo
+        //Buscamos el primer padre disponible para mantener la propiedad de árbol completo
         NodoMonticulo padre = buscarPrimerPadreDisponible(raiz);
         if (padre != null) {
             if (padre.izquierdo == null) {
@@ -55,13 +55,13 @@ public class MonticuloMinimo { //Orden por cantidad de libros disponibles
         }
     }
 
-   // Flota el nodo hacia arriba si su cantidad prestada es mayor que la de su padre
+   //Flota el nodo hacia arriba si su cantidad disponible es menor que la de su padre
     private void burbujaArriba(NodoMonticulo nodo) {
         while (nodo.padre != null && nodo.getLibro().getCantidadDisponible() < nodo.padre.getLibro().getCantidadDisponible()) {
-            // Copiamos temporalmente el libro actual
+            //Copiamos temporalmente el libro actual
             Libro temp = nodo.getLibro();
             
-            // Intercambiamos referencias de libro entre nodos
+            //Intercambiamos referencias de libro entre nodos
             nodo.setLibro(nodo.padre.getLibro());
             nodo.padre.setLibro(temp);
 
@@ -89,7 +89,7 @@ public class MonticuloMinimo { //Orden por cantidad de libros disponibles
         }
     }
 
-    // Busca un nodo por el ISBN del libro (Búsqueda en árbol)
+    //Busca un nodo por el ISBN del libro
     private NodoMonticulo buscarNodoPorISBN(NodoMonticulo actual, String isbn) {
         if (actual == null) return null;
         if (actual.getLibro().getISBN().equals(isbn)) return actual;
@@ -100,7 +100,7 @@ public class MonticuloMinimo { //Orden por cantidad de libros disponibles
         return buscarNodoPorISBN(actual.derecho, isbn);
     }
 
-    // Busca el primer nodo disponible que le falte un hijo (izquierdo o derecho)
+    //Busca el primer nodo disponible que le falte un hijo (izquierdo o derecho)
     private NodoMonticulo buscarPrimerPadreDisponible(NodoMonticulo actual) {
         if (actual == null) return null;
 
@@ -110,7 +110,7 @@ public class MonticuloMinimo { //Orden por cantidad de libros disponibles
         while (!cola.isEmpty()) {
             NodoMonticulo temp = cola.poll();
 
-            // Si le falta alguno de los dos hijos, este es el padre disponible
+            //Si le falta alguno de los dos hijos, este es el padre disponible
             if (temp.izquierdo == null || temp.derecho == null) {
                 return temp;
         }
@@ -122,18 +122,18 @@ public class MonticuloMinimo { //Orden por cantidad de libros disponibles
     return null;
     }
 
-    // Visualización de montículo máximo
+    //Visualización de montículo mínimo
     private void mostrarMonticulo(NodoMonticulo nodo, String prefijo, boolean esDerecho) {
         if (nodo != null) {
-            // 1. Procesar primero el hijo derecho (aparecerá en la parte superior)
+            //Procesar primero el hijo derecho (aparecerá en la parte superior)
             mostrarMonticulo(nodo.derecho, prefijo + (esDerecho ? "    " : "│   "), true);
 
-            // 2. Imprimir el nodo actual
+            //Imprimir el nodo actual
             System.out.println(prefijo + (esDerecho ? "┌── " : "└── ") +
                             "ISBN: " + nodo.getLibro().getISBN() +
                             " | Disponibles: " + nodo.getLibro().getCantidadDisponible());
 
-            // 3. Procesar el hijo izquierdo (aparecerá en la parte inferior)
+            //Procesar el hijo izquierdo (aparecerá en la parte inferior)
             mostrarMonticulo(nodo.izquierdo, prefijo + (esDerecho ? "│   " : "    "), false);
         }
     }

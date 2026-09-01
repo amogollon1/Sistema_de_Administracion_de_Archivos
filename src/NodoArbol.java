@@ -8,7 +8,7 @@ public class NodoArbol {
     boolean esHoja; //Indica si el nodo es una hoja, necesario para saber si es una clave o un valor
     ArrayList<String> claves;
     ArrayList<NodoArbol> hijos;
-
+    //Constructor
     public NodoArbol(boolean esHoja) {
         this.esHoja = esHoja;
         this.claves = new ArrayList<>();
@@ -17,6 +17,6 @@ public class NodoArbol {
 
     @Override
     public String toString() {
-        return "Nodo{" + "esHoja=" + esHoja + ", claves=" + claves + ", hijos=" + hijos + '}'; //revisar si se muestra bien
+        return "Nodo{" + "esHoja=" + esHoja + ", claves=" + claves + ", hijos=" + hijos + '}';
     }
 }

@@ -30,7 +30,7 @@ public class GestorDeArchivos {
         }
         return resultado;
     }
-
+    //Método para obtener y guardar los libros provenientes de "libros.txt" en las estructuras
     public void cargarLibros(String ruta, TablaHash tablaHash, ArbolBMasClase arbolB, MonticuloMaximo maxHeap, MonticuloMinimo minHeap){
         try(BufferedReader br = new BufferedReader(new FileReader(ruta))){
             String linea;
@@ -58,7 +58,7 @@ public class GestorDeArchivos {
             System.out.println("Error al cargar el archivo: " + e.getMessage());
         }
     }
-
+    //Método para obtener, guardar y actualizar los prestamos provenientes de "prestamos.txt" en el montículo máximo
     public void cargarPrestamos(String ruta, TablaHash tablaHash, MonticuloMaximo maxHeap){
         try(BufferedReader br = new BufferedReader(new FileReader(ruta))){
             String linea;
@@ -89,7 +89,7 @@ public class GestorDeArchivos {
             System.out.println("Error al cargar los prestamos: " + e.getMessage());
         }
     }
-
+    //Método para obtener, guardar y actualizar las existencias provenientes de "existencias.txt" en el montículo mínimo
     public void cargarExistencias(String ruta, TablaHash tablaHash, MonticuloMinimo minHeap){
         try(BufferedReader br = new BufferedReader(new FileReader(ruta))){
             String linea;
@@ -110,7 +110,7 @@ public class GestorDeArchivos {
 
                     if(libro != null){
                         int totalDisponible = libro.getCantidadDisponible() + cantidadDisponible; //Se calcula la nueva cantidad total disponible
-                        libro.setCantidadPrestada(totalDisponible); //Se actualiza el valor antiguo por el nuevo
+                        libro.setCantidadDisponible(totalDisponible); //Se actualiza el valor antiguo por el nuevo
                     }
                     minHeap.actualizarOInsertar(libro, cantidadDisponible); //Se reordena luego de modificar la cantidad disponible
                     System.out.println("Disponibilidad actualizada correctamente.");

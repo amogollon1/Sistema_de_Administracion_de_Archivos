@@ -1,7 +1,12 @@
+/**
+ *
+ * @author ojela
+ */
+//Clase que representa cada nodo que formará parte de la tabla Hash
 public class NodoHash {
     private Libro libro;
     private NodoHash siguiente;
-
+    //Constructor
     public NodoHash(Libro libro) {
         this.libro = libro;
         this.siguiente = null;

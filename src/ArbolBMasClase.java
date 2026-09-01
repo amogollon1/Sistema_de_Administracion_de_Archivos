@@ -7,10 +7,15 @@ public class ArbolBMasClase {
     private NodoArbol raiz;
     private final int grado = 2; // t = 2 -> máx 3 claves por nodo (2*t - 1)
 
+    // Constructor: Inicializa el árbol con una raíz vacía de tipo Hoja
     public ArbolBMasClase() {
         raiz = new NodoArbol(true);
     }
 
+    /**
+     * Compara dos claves de tipo String. Intenta realizar una comparación
+     * numérica entera si ambas son parseables; de lo contrario, aplica orden lexicográfico.
+     */
     private int compararClaves(String s1, String s2) {
         try {
             int n1 = Integer.parseInt(s1);
@@ -21,6 +26,10 @@ public class ArbolBMasClase {
         }
     }
 
+    /**
+     * Inserta una nueva clave en el Árbol B+.
+     * Si la raíz supera la capacidad máxima de claves, la divide y crea una nueva raíz.
+     */
     public void insertar(String clave) {
         insertarRecursivo(raiz, clave);
         // Si la raíz superó el límite de claves, se divide y se crea una nueva raíz
@@ -32,6 +41,10 @@ public class ArbolBMasClase {
         }
     }
 
+    /**
+     * Recorre el árbol de forma recursiva hasta ubicar la hoja adecuada para insertar la clave,
+     * manteniendo el orden. Realiza la división de nodos sobrecargados al retornar.
+     */
     private void insertarRecursivo(NodoArbol nodo, String clave) {
         if (nodo.esHoja) {
             int pos = 0;
@@ -54,6 +67,11 @@ public class ArbolBMasClase {
         }
     }
 
+    /**
+     * Divide un nodo hijo sobrecargado en dos nodos independientes.
+     * Si es hoja, copia el primer elemento de la derecha al padre.
+     * Si es interno, promueve la clave del medio al padre.
+     */
     private void dividirHijo(NodoArbol padre, int i) {
         NodoArbol hijo = padre.hijos.get(i);
         NodoArbol nuevo = new NodoArbol(hijo.esHoja);
@@ -82,11 +100,17 @@ public class ArbolBMasClase {
         }
     }
 
+    /**
+     * Muestra la estructura jerárquica del Árbol B+ en consola por niveles.
+     */
     public void imprimir() {
         imprimirNodo(raiz, 0);
         System.out.println("");
     }
 
+    /**
+     * Recorrido recursivo para imprimir las claves y la cantidad de hijos de cada nodo según su nivel.
+     */
     private void imprimirNodo(NodoArbol nodo, int nivel) {
         System.out.println("Nivel " + nivel + " (" + (nodo.esHoja ? "Hoja" : "Interno") + "): " + nodo.claves);
         if (!nodo.esHoja) {
@@ -97,10 +121,16 @@ public class ArbolBMasClase {
         }
     }
 
+    /**
+     * Verifica la existencia de una clave en el árbol.
+     */
     public boolean buscar(String clave) {
         return buscarRecursivo(raiz, clave);
     }
 
+    /**
+     * Navega recursivamente por los nodos guía hasta alcanzar la hoja correspondiente donde se consulta la clave.
+     */
     private boolean buscarRecursivo(NodoArbol nodo, String clave) {
         if (nodo.esHoja) {
             return nodo.claves.contains(clave);
@@ -112,6 +142,9 @@ public class ArbolBMasClase {
         return buscarRecursivo(nodo.hijos.get(i), clave);
     }
 
+    /**
+     * Elimina una clave del Árbol B+ y reajusta la raíz si esta queda vacía tras la operación.
+     */
     public void eliminar(String clave) {
         if (raiz == null) return;
         eliminarRecursivo(raiz, clave);
@@ -121,6 +154,10 @@ public class ArbolBMasClase {
         }
     }
 
+    /**
+     * Realiza el proceso recursivo de eliminación de una clave, invocando rebalanceos y
+     * actualización de claves guía cuando un nodo queda por debajo del mínimo de claves.
+     */
     private void eliminarRecursivo(NodoArbol nodo, String clave) {
         int i = 0;
         while (i < nodo.claves.size() && compararClaves(clave, nodo.claves.get(i)) >= 0) {
@@ -143,6 +180,10 @@ public class ArbolBMasClase {
         actualizarClavesGuia(nodo);
     }
 
+    /**
+     * Evalúa la disponibilidad de préstamos de claves desde hermanos izquierdos o derechos.
+     * Si no es posible el préstamo, realiza una fusión de nodos.
+     */
     private void rebalancear(NodoArbol padre, int idxHijo) {
         NodoArbol hijo = padre.hijos.get(idxHijo);
 
@@ -169,6 +210,9 @@ public class ArbolBMasClase {
         }
     }
 
+    /**
+     * Toma prestada una clave del hermano izquierdo para restablecer el balance mínimo del nodo hijo.
+     */
     private void prestarDeIzquierda(NodoArbol padre, int idxHijo, NodoArbol hermanoIzq, NodoArbol hijo) {
         if (hijo.esHoja) {
             String clavePrestada = hermanoIzq.claves.remove(hermanoIzq.claves.size() - 1);
@@ -185,6 +229,9 @@ public class ArbolBMasClase {
         }
     }
 
+    /**
+     * Toma prestada una clave del hermano derecho para restablecer el balance mínimo del nodo hijo.
+     */
     private void prestarDeDerecha(NodoArbol padre, int idxHijo, NodoArbol hermanoDer, NodoArbol hijo) {
         if (hijo.esHoja) {
             String clavePrestada = hermanoDer.claves.remove(0);
@@ -201,6 +248,9 @@ public class ArbolBMasClase {
         }
     }
 
+    /**
+     * Combina dos nodos adyacentes cuando el préstamo de claves no es suficiente para mantener el grado mínimo.
+     */
     private void fusionar(NodoArbol padre, int idxIzq) {
         NodoArbol izq = padre.hijos.get(idxIzq);
         NodoArbol der = padre.hijos.get(idxIzq + 1);
@@ -218,6 +268,10 @@ public class ArbolBMasClase {
         }
     }
 
+    /**
+     * Revisa los nodos internos y actualiza sus claves guía basándose en la primera clave
+     * del subárbol derecho correspondientes a las hojas.
+     */
     private void actualizarClavesGuia(NodoArbol nodo) {
         if (nodo.esHoja) return;
         for (int j = 0; j < nodo.claves.size(); j++) {

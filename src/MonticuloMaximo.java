@@ -13,27 +13,27 @@ public class MonticuloMaximo { //Orden por cantidad de libros prestados
         return raiz == null;
     }
 
-    // Método principal para procesar préstamos (Requisito del proyecto)
+    //Método principal para procesar préstamos
     public void actualizarOInsertar(Libro libro, int cantidadPrestada) {
-        // 1. Buscamos si el libro ya existe en el montículo
+        //Buscamos si el libro ya existe en el montículo
         NodoMonticulo existente = buscarNodoPorISBN(raiz, libro.getISBN());
 
         if (existente != null) {
-            // 2. Si ya existe, sumamos las cantidades
+            //Si ya existe, sumamos las cantidades
             int nuevaCantidad = existente.getLibro().getCantidadPrestada() + cantidadPrestada;
             existente.getLibro().setCantidadPrestada(nuevaCantidad);
             
-            // Como la cantidad AUMENTÓ, hacemos flotar el nodo en el Max Heap
+            //Como la cantidad aumenta, hacemos flotar el nodo en el Max Heap
             burbujaArriba(existente);
         } else {
-            // 3. Si no existe, nos aseguramos que traiga la cantidad del préstamo e insertamos
+            //Si no existe, nos aseguramos que traiga la cantidad del préstamo e insertamos
             libro.setCantidadPrestada(cantidadPrestada);
             insertar(libro);
         }
     }
-
+    //Método para insertar un libro al maxHeap
     public void insertar(Libro libro) {
-        // Crear una copia independiente del libro para que la tabla hash no afecte las posiciones del heap
+        //Crear una copia independiente del libro para que la tabla hash no afecte las posiciones del heap
         Libro copiaLibro = new Libro(libro.getISBN(), libro.getTitulo(), libro.getAutor(), libro.getEditorial(), libro.getYear(), libro.getCategoria(), libro.getCantidadDisponible(), libro.getCantidadPrestada());
         copiaLibro.setCantidadPrestada(libro.getCantidadPrestada());
 
@@ -42,7 +42,7 @@ public class MonticuloMaximo { //Orden por cantidad de libros prestados
             raiz = nuevo;
             return;
         }
-        // Buscamos el primer padre disponible para mantener la propiedad de árbol completo
+        //Buscamos el primer padre disponible para mantener la propiedad de árbol completo
         NodoMonticulo padre = buscarPrimerPadreDisponible(raiz);
         if (padre != null) {
             if (padre.izquierdo == null) {
@@ -55,22 +55,22 @@ public class MonticuloMaximo { //Orden por cantidad de libros prestados
         }
     }
 
-    // Flota el nodo hacia arriba si su cantidad prestada es mayor que la de su padre
+    //Flota el nodo hacia arriba si su cantidad prestada es mayor que la de su padre
     private void burbujaArriba(NodoMonticulo nodo) {
         while (nodo.padre != null && nodo.getLibro().getCantidadPrestada() > nodo.padre.getLibro().getCantidadPrestada()) {
-            // Copiamos temporalmente el libro actual
+            //Copiamos temporalmente el libro actual
             Libro temp = nodo.getLibro();
             
-            // Intercambiamos referencias de libro entre nodos
+            //Intercambiamos referencias de libro entre nodos
             nodo.setLibro(nodo.padre.getLibro());
             nodo.padre.setLibro(temp);
 
-            // Subimos al padre
+            //Subimos al padre
             nodo = nodo.padre;
         }
     }
 
-    // Busca un nodo por el ISBN del libro (Búsqueda en árbol)
+    //Busca un nodo por el ISBN del libro
     private NodoMonticulo buscarNodoPorISBN(NodoMonticulo actual, String isbn) {
         if (actual == null) return null;
         if (actual.getLibro().getISBN().equals(isbn)) return actual;
@@ -81,7 +81,7 @@ public class MonticuloMaximo { //Orden por cantidad de libros prestados
         return buscarNodoPorISBN(actual.derecho, isbn);
     }
 
-    // Busca el primer nodo disponible que le falte un hijo (izquierdo o derecho)
+    //Busca el primer nodo disponible que le falte un hijo (izquierdo o derecho)
     private NodoMonticulo buscarPrimerPadreDisponible(NodoMonticulo actual) {
         if (actual == null) return null;
 
@@ -91,7 +91,7 @@ public class MonticuloMaximo { //Orden por cantidad de libros prestados
     while (!cola.isEmpty()) {
         NodoMonticulo temp = cola.poll();
 
-        // Si le falta alguno de los dos hijos, este es el padre disponible
+        //Si le falta alguno de los dos hijos, este es el padre disponible
         if (temp.izquierdo == null || temp.derecho == null) {
             return temp;
         }
@@ -103,18 +103,18 @@ public class MonticuloMaximo { //Orden por cantidad de libros prestados
     return null;
     }
 
-    // Visualización de montículo máximo
+    //Visualización de montículo máximo
     private void mostrarMonticulo(NodoMonticulo nodo, String prefijo, boolean esDerecho) {
         if (nodo != null) {
-            // 1. Procesar primero el hijo derecho (aparecerá en la parte superior)
+            //Procesar primero el hijo derecho (aparecerá en la parte superior)
             mostrarMonticulo(nodo.derecho, prefijo + (esDerecho ? "    " : "│   "), true);
 
-            // 2. Imprimir el nodo actual
+            //Imprimir el nodo actual
             System.out.println(prefijo + (esDerecho ? "┌── " : "└── ") +
                             "ISBN: " + nodo.getLibro().getISBN() +
                             " | Prestados: " + nodo.getLibro().getCantidadPrestada());
 
-            // 3. Procesar el hijo izquierdo (aparecerá en la parte inferior)
+            //Procesar el hijo izquierdo (aparecerá en la parte inferior)
             mostrarMonticulo(nodo.izquierdo, prefijo + (esDerecho ? "│   " : "    "), false);
         }
     }
